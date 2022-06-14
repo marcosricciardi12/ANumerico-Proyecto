@@ -1,5 +1,3 @@
-from datetime import datetime
-import re
 from tabulate import tabulate
 import pandas as pd
 from colorama import Fore, init, Back
@@ -29,17 +27,17 @@ class Metodo:
         print("\nPara finalizar la carga cuando se desee, presionar enter cuando se solicite el valor de x, sin ingresar ningún valor")
         while True:
             self.cant += 1
-            lectura = input("\nIngrese x%d: " % self.cant)
+            lectura = input(Fore.LIGHTYELLOW_EX + "\nIngrese x%d: " % self.cant)
             if lectura == '':
                 print("Lectura vacia")
                 self.cant -= 1
                 break
             while self.validate_input(lectura):
-                lectura = input("\nIngrese x%d: " % self.cant)
+                lectura = input(Fore.LIGHTYELLOW_EX + "\nIngrese x%d: " % self.cant)
             self.x.append(float(lectura))
-            lectura = input("\nIngrese el valor de f(x)%d: " % self.cant)
+            lectura = input(Fore.LIGHTYELLOW_EX + "\nIngrese el valor de f(x)%d: " % self.cant)
             while self.validate_input(lectura):
-                lectura = input("\nIngrese el valor de f(x)%d: " % self.cant)
+                lectura = input(Fore.LIGHTYELLOW_EX + "\nIngrese el valor de f(x)%d: " % self.cant)
             self.fx.append(float(lectura))
             clearscreen()
         clearscreen()
@@ -120,6 +118,15 @@ class Metodo:
         plt.close()
 
     def show_both(self):
+        xmin = min(self.x)
+        xmax = max(self.x)
+        while xmin <= xmax:
+            aux = 0
+            for i in range(self.cant):
+                aux = aux + (math.pow(xmin, i) * self.matX[i])
+            self.valoresx.append(xmin)
+            self.valoresy.append(aux)
+            xmin += self.intervalo
         plt.figure(figsize=(10,7))
         plt.plot(self.x,self.fx,'o',color='blue',markersize=7)
         plt.plot(self.valoresx, self.valoresy,color='orange',markersize=5)
@@ -152,7 +159,11 @@ class Metodo:
             print(Fore.LIGHTGREEN_EX + "\tx%d: |%f|" % (i, self.matX[i]))
 
         print(Fore.BLUE + "\nFUNCION QUE APROXIMA AL CONJUNTO DE PUNTOS INGRESADOS: \n")
-        print("\t\tf(x) = ", end='')
+        print(Fore.LIGHTRED_EX + "\t\tf(x) = ", end='')
         for i in range(self.cant):
-            print(Fore.YELLOW + "+%f*x^%d" % (self.matX[i], i), end='')
+            if abs(self.matX[i]) > 0.000001:
+                if i>0:
+                    print(Fore.YELLOW + "%+f*x^%d" % (self.matX[i], i), end='')
+                else:
+                    print(Fore.YELLOW + "%+f" % self.matX[i], end='')
         print("\n")
